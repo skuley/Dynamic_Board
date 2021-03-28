@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 		
+		
+	<util:properties id="prop" location="classpath:/framework/common.properties"/>
+	
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"	value="#{prop['jdbc.driverClassName']}" />
+        <property name="url" 				value="#{prop['jdbc.url']}" />
+		<property name="username" 			value="#{prop['jdbc.username']}" />
+		<property name="password" 			value="#{prop['jdbc.password']}" />
+    </bean>
+    
+    <!-- SqlSession setup for MyBatis Database Layer -->
+    <bean id="sqlSession" class="com.kt.medicalmakers.common.util.RefreshableSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:/sqlmap/sqlmap-config.xml"/>
+        <property name="mapperLocations" value="classpath:/sqlmap/sql/*.xml"/>
+        <property name="interval" value="1000"/>
+    </bean>
 </beans>
